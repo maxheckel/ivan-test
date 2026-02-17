@@ -6,7 +6,7 @@ on:
 
 jobs:
   handle-ivanagent:
-    if: contains(github.event.comment.body, '@ivanagent')
+    if: contains(github.event.comment.body, '@ivan-agent')
     runs-on: ubuntu-latest
 
     steps:
