@@ -9,6 +9,10 @@ jobs:
     if: contains(github.event.comment.body, '@ivan-agent')
     runs-on: ubuntu-latest
     environment: ivan
+    permissions:
+      issues: write
+      contents: write
+      pull-requests: write
 
     steps:
       - name: Check required secrets
@@ -26,6 +30,12 @@ jobs:
             exit 1
           fi
           echo "All required secrets are present"
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.PAT }}
+          fetch-depth: 0
 
       - name: Create Ivan config directory
         run: mkdir -p ~/.ivan
