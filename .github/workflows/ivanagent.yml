@@ -8,6 +8,7 @@ jobs:
   handle-ivanagent:
     if: contains(github.event.comment.body, '@ivan-agent')
     runs-on: ubuntu-latest
+    environment: ivan
 
     steps:
       - name: Check required secrets
