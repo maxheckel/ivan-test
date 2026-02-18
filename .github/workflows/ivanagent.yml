@@ -173,7 +173,7 @@ jobs:
         if: steps.run_ivan.outputs.pr_number != '' && steps.run_ivan.outputs.ivan_failed == 'false'
         run: |
           echo "Waiting 15 minutes before running ivan address command..."
-          sleep 900
+          sleep 60
 
       - name: Run Ivan address command
         if: steps.run_ivan.outputs.pr_number != '' && steps.run_ivan.outputs.ivan_failed == 'false'
