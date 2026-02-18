@@ -129,19 +129,14 @@ jobs:
           script: |
             const fs = require('fs');
             const ivanOutput = fs.readFileSync('/tmp/ivan_output.txt', 'utf8');
+            const prUrl = '${{ steps.run_ivan.outputs.pr_url }}';
 
-            const body = `✅ Ivan has created a pull request: ${{ steps.run_ivan.outputs.pr_url }}
-
-⏳ **Addressing comments now...**
-
-<details>
-<summary>View Ivan command output</summary>
-
-\`\`\`
-${ivanOutput}
-\`\`\`
-
-</details>`;
+            const body = '✅ Ivan has created a pull request: ' + prUrl + '\n\n' +
+              '⏳ **Addressing comments now...**\n\n' +
+              '<details>\n' +
+              '<summary>View Ivan command output</summary>\n\n' +
+              '```\n' + ivanOutput + '\n```\n\n' +
+              '</details>';
 
             await github.rest.issues.createComment({
               owner: context.repo.owner,
@@ -193,19 +188,14 @@ ${ivanOutput}
           script: |
             const fs = require('fs');
             const addressOutput = fs.readFileSync('/tmp/ivan_address_output.txt', 'utf8');
+            const prNumber = '${{ steps.run_ivan.outputs.pr_number }}';
 
-            const body = `✅ **Ivan has finished addressing comments on PR #${{ steps.run_ivan.outputs.pr_number }}**
-
-The PR has been updated based on any review comments received.
-
-<details>
-<summary>View ivan address command output</summary>
-
-\`\`\`
-${addressOutput}
-\`\`\`
-
-</details>`;
+            const body = '✅ **Ivan has finished addressing comments on PR #' + prNumber + '**\n\n' +
+              'The PR has been updated based on any review comments received.\n\n' +
+              '<details>\n' +
+              '<summary>View ivan address command output</summary>\n\n' +
+              '```\n' + addressOutput + '\n```\n\n' +
+              '</details>';
 
             await github.rest.issues.createComment({
               owner: context.repo.owner,
