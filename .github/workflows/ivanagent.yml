@@ -66,9 +66,9 @@ jobs:
 
       - name: Install Ivan CLI
         run: |
-          npm install -g @ariso-ai/ivan@latest
+          npm install -g @ariso-ai/ivan@latest --prefix ~/.local
           echo "Ivan installed successfully"
-          ivan --version
+          ~/.local/bin/ivan --version
 
       - name: Add eyes reaction to comment
         uses: peter-evans/create-or-update-comment@v4
@@ -97,14 +97,11 @@ jobs:
           # Escape the issue body for JSON
           ESCAPED_ISSUE=$(echo "$ISSUE_BODY" | jq -Rs .)
 
-          # Run ivan command and capture output with proper error handling
+          # Run ivan command with output streaming and also capture to file
           set +e
-          OUTPUT=$(ivan -c "{\"tasks\": [$ESCAPED_ISSUE], \"generateSubtasks\": false, \"prStrategy\": \"multiple\", \"waitForComments\": true}" 2>&1)
-          EXIT_CODE=$?
+          ~/.local/bin/ivan -c "{\"tasks\": [$ESCAPED_ISSUE], \"generateSubtasks\": false, \"prStrategy\": \"multiple\", \"waitForComments\": true}" 2>&1 | tee /tmp/ivan_output.txt
+          EXIT_CODE=${PIPESTATUS[0]}
           set -e
-
-          echo "$OUTPUT"
-          echo "$OUTPUT" > /tmp/ivan_output.txt
 
           if [ $EXIT_CODE -ne 0 ]; then
             echo "ivan_failed=true" >> $GITHUB_OUTPUT
@@ -112,8 +109,8 @@ jobs:
             echo "ivan_failed=false" >> $GITHUB_OUTPUT
           fi
 
-          # Extract PR URL from output (looking for github.com PR URLs)
-          PR_URL=$(echo "$OUTPUT" | grep -oP 'https://github\.com/[^/]+/[^/]+/pull/\d+' | head -1 || echo "")
+          # Extract PR URL from output file (looking for github.com PR URLs)
+          PR_URL=$(grep -oP 'https://github\.com/[^/]+/[^/]+/pull/\d+' /tmp/ivan_output.txt | head -1 || echo "")
 
           if [ -n "$PR_URL" ]; then
             echo "pr_url=$PR_URL" >> $GITHUB_OUTPUT
