@@ -6,7 +6,7 @@ on:
 
 jobs:
   handle-ivanagent:
-    if: contains(github.event.comment.body, '@ivan-agent')
+    if: contains(github.event.comment.body, '@ivan-agent /build')
     runs-on: ubuntu-latest
     environment: ivan
     permissions:
@@ -32,7 +32,7 @@ jobs:
           echo "All required secrets are present"
 
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           token: ${{ secrets.PAT }}
           fetch-depth: 0
@@ -99,7 +99,7 @@ jobs:
 
           # Run ivan command with output streaming and also capture to file
           set +e
-          ~/.local/bin/ivan -c "{\"tasks\": [$ESCAPED_ISSUE], \"generateSubtasks\": false, \"prStrategy\": \"multiple\"}" 2>&1 | tee /tmp/ivan_output.txt
+          ~/.local/bin/ivan -c "{\"tasks\": [$ESCAPED_ISSUE], \"generateSubtasks\": false, \"prStrategy\": \"multiple\", \"rewritePrompt\": true}" 2>&1 | tee /tmp/ivan_output.txt
           EXIT_CODE=${PIPESTATUS[0]}
           set -e
 
